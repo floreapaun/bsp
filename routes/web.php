@@ -3,10 +3,12 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\CheckAdmin;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -48,6 +50,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/images/{id}', [ImageController::class, 'destroy']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);
     Route::patch('/posts/{id}', [PostController::class, 'updateActive'])->middleware(CheckAdmin::class);
+    Route::post('/messages', [MessageController::class, 'sendMessage']);
+    Route::get('/messages/{postId}', [MessageController::class, 'getMessages']);
+    Route::get('/user', function (Request $request) {
+        return response()->json(Auth::user());
+    });
 });
 
 require __DIR__.'/auth.php';

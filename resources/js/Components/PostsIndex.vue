@@ -52,6 +52,25 @@
                     <p v-if="visiblePhoneNumbers[post.id]" class="mt-2 text-lg text-gray-800">
                         📞 {{ post.phone_number }}
                     </p>
+
+                </div>
+                
+                <div class="mt-4 flex flex-col items-center justify-center">
+                    <!-- Show chat button -->
+                    <button
+                        @click="toggleChat(post.id)"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    >
+                        {{ isChatVisible(post.id) ? "Hide Chat" : "Show Chat" }}
+                    </button>
+
+                    <!-- Chat component, only visible when showChat is true -->
+                    <div
+                        v-if="isChatVisible(post.id)"
+                        class="mt-4 flex flex-col items-center justify-center"
+                    >
+                        <Chat :postId="post.id" :senderId="authenticatedUser.id" />
+                    </div>
                 </div>
 
             </div>
@@ -77,31 +96,51 @@
 <script>
 import axios from 'axios';
 import { debounce } from 'lodash';
+import Chat from './Chat.vue';
 
 export default {
+    components: {
+        Chat
+    },
     data() {
         return {
             posts: [],
+            authenticatedUser: null,
             loading: true,
             isModalOpen: false,
             selectedImage: null,
             visiblePhoneNumbers: [],
             searchQuery: '',
+            visibileChats: [], 
         };
     },
     mounted() {
         this.fetchPosts();
+    },
+    beforeMount() {
+        this.getUser();
     },
     methods: {
         async fetchPosts() {
             try {
                 const response = await axios.get('/posts');
                 this.posts = response.data;
+                console.log(this.posts);
             } catch (error) {
                 console.error("Error fetching posts:", error);
             } finally {
                 this.loading = false;
             }
+        },
+        async getUser() {
+            axios.get('/user')
+                .then(response => {
+                    this.authenticatedUser = response.data;
+                    console.log(this.authenticatedUser);
+                })
+                .catch(error => {
+                    console.error('Error fetching user:', error);
+                });
         },
         openImageModal(imagePath) {
             this.selectedImage = imagePath;
@@ -114,6 +153,12 @@ export default {
             } else {
                 this.visiblePhoneNumbers[postId] = !this.visiblePhoneNumbers[postId];
             }
+        },
+        toggleChat(postId) {
+            this.visibleChats[postId] = this.visibleChats[postId] === 1 ? 0 : 1;
+        },
+        isChatVisible(postId) {
+            return this.visibleChats[postId] === 1; // Check visibility
         },
         handleSearch: debounce(function () {
             if (this.searchQuery.trim() === '') {
