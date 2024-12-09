@@ -55,16 +55,14 @@
 
                 </div>
                 
+                
                 <div class="mt-4 flex flex-col items-center justify-center">
-                    <!-- Show chat button -->
                     <button
                         @click="toggleChat(post.id)"
                         class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
                     >
                         {{ isChatVisible(post.id) ? "Hide Chat" : "Show Chat" }}
                     </button>
-
-                    <!-- Chat component, only visible when showChat is true -->
                     <div
                         v-if="isChatVisible(post.id)"
                         class="mt-4 flex flex-col items-center justify-center"
@@ -72,6 +70,7 @@
                         <Chat :postId="post.id" :senderId="authenticatedUser.id" />
                     </div>
                 </div>
+                
 
             </div>
         </div>
@@ -104,6 +103,7 @@ export default {
     },
     data() {
         return {
+            visibleChats: [], 
             posts: [],
             authenticatedUser: null,
             loading: true,
@@ -111,7 +111,7 @@ export default {
             selectedImage: null,
             visiblePhoneNumbers: [],
             searchQuery: '',
-            visibileChats: [], 
+            
         };
     },
     mounted() {
@@ -158,7 +158,7 @@ export default {
             this.visibleChats[postId] = this.visibleChats[postId] === 1 ? 0 : 1;
         },
         isChatVisible(postId) {
-            return this.visibleChats[postId] === 1; // Check visibility
+            return this.visibleChats[postId] === 1;
         },
         handleSearch: debounce(function () {
             if (this.searchQuery.trim() === '') {
