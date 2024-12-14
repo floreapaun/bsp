@@ -76,7 +76,9 @@
         </button>
   
         <!-- Success Message -->
-        <p v-if="successMessage" class="mt-4 text-green-600">{{ successMessage }}</p>
+        <div class="m-4 text-center">
+          <span v-if="successMessage" class="text-green-600">{{ successMessage }}</span>
+        </div>
       </form>
     </div>
   </template>
