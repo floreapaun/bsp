@@ -35,6 +35,21 @@
                     />
                 </div>
 
+                <div 
+                    id="location-display" 
+                    class="flex items-center space-x-4 bg-gradient-to-r from-blue-50 to-blue-200 text-blue-900 font-semibold text-sm sm:text-base px-4 py-3 rounded-lg shadow-lg"
+                >
+                    <!-- Beautiful Location Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path 
+                        d="M10 20a1 1 0 01-.832-.445C7.27 16.843 4 12.713 4 9a6 6 0 1112 0c0 3.713-3.27 7.843-5.168 10.555A1 1 0 0110 20zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        />
+                    </svg>
+
+                    <!-- Location Text -->
+                    <span>{{ post.location.name}}</span>
+                </div>
+
                 <div class="mt-4 flex items-center justify-center space-x-3 group relative">
                     <!-- Checkbox Toggle Switch -->
                     <label class="flex items-center cursor-pointer relative">
@@ -97,18 +112,42 @@
                 <!-- Post Title -->
                 <label class="block mb-2 text-sm font-medium text-gray-700">Title</label>
                 <input type="text" v-model="editedPost.title" class="w-full p-2 mb-4 border rounded-lg" />
+                <span v-if="errors.title" class="text-red-600">{{ errors.title }}</span>
 
                 <!-- Post Body -->
                 <label class="block mb-2 text-sm font-medium text-gray-700">Body</label>
                 <textarea v-model="editedPost.body" class="w-full p-2 mb-4 border rounded-lg" rows="4"></textarea>
+                <span v-if="errors.body" class="text-red-600">{{ errors.body }}</span>
 
                 <!-- Post Phone Number -->
                 <label class="block mb-2 text-sm font-medium text-gray-700">Phone Number</label>
-                <input type="number" v-model="editedPost.phone_number" class="w-full p-2 mb-4 border rounded-lg" />
+                <input type="text" v-model="editedPost.phone_number" class="w-full p-2 mb-4 border rounded-lg" />
+                <span v-if="errors.phoneNumber" class="text-red-600">{{ errors.phoneNumber }}</span>
 
                 <!-- Post Price -->
                 <label class="block mb-2 text-sm font-medium text-gray-700">Price (&euro;)</label>
                 <input type="number" v-model="editedPost.price" class="w-full p-2 mb-4 border rounded-lg" />
+                <span v-if="errors.price" class="text-red-600">{{ errors.price }}</span>
+
+                <div :class="{ 'mb-60': isFocused, 'mb-4': !isFocused }">
+                    <label for="location" class="block text-gray-700">Location</label>
+                    <Select
+                        v-model="editedPost.location_id"
+                        id="location"
+                        :options="locations"
+                        optionLabel="name"
+                        editable
+                        optionValue="id"
+                        :virtualScrollerOptions="{ itemSize: 38 }"
+                        placeholder="What's your city?"
+                        class="w-full bg-blue-50 border border-blue-300 text-blue-700 rounded-lg 
+                        shadow-sm focus:ring focus:ring-blue-300 focus:border-blue-500 z-100"
+                        @focus="isFocused = true"
+                        @blur="isFocused = false"
+                    />
+                    <span v-if="errors.location_id" class="text-red-600">{{ errors.location_id }}</span>
+                </div>
+                
 
                 <!-- Existing Images -->
                 <div v-if="editedPost.images.length > 0" class="mb-4">
@@ -140,6 +179,7 @@
                         </div>
                     </div>
                 </div>
+                <span v-if="errors.images" class="text-red-600">{{ errors.images }}</span>
 
                 <!-- Save and Cancel Buttons -->
                 <div class="flex justify-end">
@@ -186,8 +226,13 @@
 <script>
 import axios from 'axios';
 import { debounce } from 'lodash';
+import Select from "primevue/select";
 
 export default {
+    components: {
+        Select,
+    },
+    
     data() {
         return {
             posts: [],
@@ -195,27 +240,55 @@ export default {
             isModalOpen: false,
             selectedImage: null,
             searchQuery: '',
-            isEditModalOpen: false, // New state for edit modal
+            isEditModalOpen: false, 
             editedPost: {
                 id: null,
                 title: '',
                 body: '',
-                price: '',
+                price: 0,
                 phone_number: '',
-                images: [],         // Existing images
+                location_id: '',
+                images: [],         
                 newImages: [],
             },
-            previews: [], // Holds the preview URLs for display  
+            locations: [],
+
+            // Holds the preview URLs for display
+            previews: [],   
+            
+            // Holds validation errors
+            errors: {}, 
+            isFocused: false,
         };
+    },
+    beforeMount() {
+        this.fetchLocations();
     },
     mounted() {
         this.fetchPosts();
     },
     methods: {
+        validateForm() {
+            const errors = {};
+            console.log(this.editedPost.price);
+
+            if (!this.editedPost.title.trim()) errors.title = "Title is required.";
+            if (!this.editedPost.body.trim()) errors.body = "Body is required.";
+            if (!String(this.editedPost.phone_number).trim()) errors.phoneNumber = "Phone number is required.";
+            else if (!/^\d+$/.test(this.editedPost.phone_number)) errors.phoneNumber = "Phone number must be numeric.";
+            if (!String(this.editedPost.price).trim()) errors.price = "Price is required.";
+            else if (isNaN(this.editedPost.price)) errors.price = "Price must be a number.";
+            if (!this.editedPost.location_id) errors.location_id = "Location is required.";
+            if (this.editedPost.images.length === 0) errors.images = "At least one image is required.";
+
+            this.errors = errors;
+            return Object.keys(errors).length === 0;
+        },
         async fetchPosts() {
             try {
                 const response = await axios.get('/posts/user');
                 this.posts = response.data;
+                console.log(this.posts);
             } catch (error) {
                 console.error("Error fetching posts:", error);
             } finally {
@@ -288,11 +361,13 @@ export default {
             this.deleteImage(imageId);
         },
         async savePost() {
+            if (!this.validateForm()) return;
             const formData = new FormData();
             formData.append('title', this.editedPost.title);
             formData.append('body', this.editedPost.body);
             formData.append('price', this.editedPost.price);
             formData.append('phone_number', this.editedPost.phone_number);
+            formData.append('location_id', this.editedPost.location_id);
 
             // Append new images to the FormData object
             this.editedPost.newImages.forEach((file, index) => {
@@ -327,6 +402,11 @@ export default {
                 alert('Error deleting post');
             }
         },
+        fetchLocations() {
+            axios.get("/locations").then((response) => {
+                 this.locations = response.data;
+            });
+        }
     },
 };
 </script>

@@ -35,6 +35,21 @@
                     />
                 </div>
 
+                <div 
+                    id="location-display" 
+                    class="flex items-center space-x-4 bg-gradient-to-r from-blue-50 to-blue-200 text-blue-900 font-semibold text-sm sm:text-base px-4 py-3 rounded-lg shadow-lg"
+                >
+                    <!-- Beautiful Location Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path 
+                        d="M10 20a1 1 0 01-.832-.445C7.27 16.843 4 12.713 4 9a6 6 0 1112 0c0 3.713-3.27 7.843-5.168 10.555A1 1 0 0110 20zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        />
+                    </svg>
+
+                    <!-- Location Text -->
+                    <span>{{ post.location.name}}</span>
+                </div>
+
                 <div class="flex items-center justify-center mt-4 p-3">
                     <button id="price-button" class="bg-purple-100 text-pink-700 font-bold text-sm sm:text-base inline-block px-3 py-2 rounded-lg shadow-md">
                         Price: {{ post.price }} &euro;
