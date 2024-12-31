@@ -55,9 +55,25 @@
         <span v-if="errors.body" class="text-red-600">{{ errors.body }}</span>
       </div>
 
+      <!-- Category Input -->
+      <div :class="{ 'mt-60': isFocused, 'mb-4': !isFocused }">
+        <Select
+          v-model="category_id"
+          id="category"
+          :options="categories"
+          optionLabel="name"
+          optionValue="id"
+          :virtualScrollerOptions="{ itemSize: 38 }"
+          placeholder="What's the post category?"
+          class="w-full p-2 border rounded focus:mt-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          @focus="isFocused = true"
+          @blur="isFocused = false"
+        />
+        <span v-if="errors.category_id" class="text-red-600">{{ errors.category_id }}</span>
+      </div>
+
       <!-- Location Input -->
-      <div :class="{ 'mb-60': isFocused, 'mb-4': !isFocused }">
-        <label for="location" class="block text-gray-700">Location</label>
+      <div :class="{ 'mt-60': isFocused, 'mb-4': !isFocused }">
         <Select
           v-model="location_id"
           id="location"
@@ -67,7 +83,7 @@
           optionValue="id"
           :virtualScrollerOptions="{ itemSize: 38 }"
           placeholder="What's your city?"
-          class="w-full p-2 border rounded focus:mb-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full p-2 border rounded focus:mt-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
           @focus="isFocused = true"
           @blur="isFocused = false"
         />
@@ -121,11 +137,13 @@ export default {
       phoneNumber: "",
       price: "",
       location_id: "",
+      category_id: "",
       images: [],
       previews: [],
       successMessage: "",
       errorMessage: "",
       locations: [],
+      categories: [],
       
       // Holds validation errors
       errors: {}, 
@@ -134,6 +152,7 @@ export default {
   },
   beforeMount() {
     this.fetchLocations();
+    this.fetchCategories();
   },
   methods: {
     validateForm() {
@@ -146,6 +165,7 @@ export default {
       if (!this.price.trim()) errors.price = "Price is required.";
       else if (isNaN(this.price)) errors.price = "Price must be a number.";
       if (!this.location_id) errors.location_id = "Location is required.";
+      if (!this.category_id) errors.category_id = "Category is required.";
       if (this.images.length === 0) errors.images = "At least one image is required.";
 
       this.errors = errors;
@@ -164,6 +184,7 @@ export default {
         formData.append("phoneNumber", this.phoneNumber);
         formData.append("price", this.price);
         formData.append("location_id", this.location_id);
+        formData.append("category_id", this.category_id);
 
         const response = await axios.post("http://localhost:8000/posts", formData);
         this.successMessage = "Post created successfully!";
@@ -189,12 +210,18 @@ export default {
         this.locations = response.data;
       });
     },
+    fetchCategories() {
+      axios.get("/categories").then((response) => {
+        this.categories = response.data;
+      });
+    },
     resetForm() {
       this.title = "";
       this.body = "";
       this.phoneNumber = "";
       this.price = "";
       this.location_id = "";
+      this.category_id = "";
       this.images = [];
       this.previews = [];
       this.errors = {};

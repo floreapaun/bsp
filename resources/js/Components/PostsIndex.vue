@@ -22,6 +22,14 @@
                 class="bg-white rounded-lg shadow-md p-6 transition-transform hover:scale-105 overflow-hidden flex flex-col"
             >
                 <h2 class="text-2xl font-semibold mb-2 text-gray-800">{{ post.title }}</h2>
+
+                <div class="m-2 flex flex-col items-center justify-center">
+                    <!-- Location Text with Hover Effect -->
+                    <span class="text-xl font-semibold text-indigo-600 bg-indigo-100 rounded-lg px-4 py-2 shadow-lg hover:bg-indigo-200 transition duration-300 ease-in-out transform hover:scale-105">
+                        Category: {{ post.category.name }}
+                    </span>
+                </div>
+
                 <p class="text-gray-700 mb-4 overflow-hidden text-ellipsis">{{ post.body }}</p>
 
                 <div v-if="post.images && post.images.length > 0" class="flex gap-4 overflow-x-auto">
@@ -39,7 +47,7 @@
                     id="location-display" 
                     class="flex items-center space-x-4 bg-gradient-to-r from-blue-50 to-blue-200 text-blue-900 font-semibold text-sm sm:text-base px-4 py-3 rounded-lg shadow-lg"
                 >
-                    <!-- Beautiful Location Icon -->
+                    <!-- Location Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                         <path 
                         d="M10 20a1 1 0 01-.832-.445C7.27 16.843 4 12.713 4 9a6 6 0 1112 0c0 3.713-3.27 7.843-5.168 10.555A1 1 0 0110 20zM10 11a2 2 0 100-4 2 2 0 000 4z"
@@ -69,7 +77,6 @@
                     </p>
 
                 </div>
-                
                 
                 <div class="mt-4 flex flex-col items-center justify-center">
                     <button

@@ -17,19 +17,19 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with(['images', 'location'])->where('is_active', 1)->get();
+        $posts = Post::with(['images', 'location', 'category'])->where('is_active', 1)->get();
         return response()->json($posts);
     }
 
     public function indexAll()
     {
-        $posts = Post::with(['images', 'location'])->get();
+        $posts = Post::with(['images', 'location', 'category'])->get();
         return response()->json($posts);
     }
 
     public function indexUser()
     {
-        $posts = Post::where('user_id', Auth::id())->with(['images', 'location'])->get();
+        $posts = Post::where('user_id', Auth::id())->with(['images', 'location', 'category'])->get();
         return response()->json($posts);
     }
 
@@ -57,7 +57,8 @@ class PostController extends Controller
             'body'  => 'required',
             'phoneNumber' => 'required',
             'price' => 'required',
-            'location_id' => 'required'
+            'location_id' => 'required',
+            'category_id' => 'required'
         ]);
 
         // Create a new post
@@ -73,6 +74,7 @@ class PostController extends Controller
         $post->phone_number = $validated['phoneNumber'];
         $post->price = $validated['price'];
         $post->location_id = $validated['location_id'];
+        $post->category_id = $validated['category_id'];
         $post->user_id = auth()->id(); 
         $post->save();
         
@@ -106,7 +108,7 @@ class PostController extends Controller
         $query = $request->input('query');
 
         // Search posts by title or content
-        $posts = Post::with(['images', 'location'])->where('title', 'like', "%{$query}%")
+        $posts = Post::with(['images', 'location', 'category'])->where('title', 'like', "%{$query}%")
                      ->orWhere('body', 'like', "%{$query}%")
                      ->get();
 
@@ -123,7 +125,7 @@ class PostController extends Controller
             $queryBuilder->where('title', 'like', "%{$query}%")
                          ->orWhere('body', 'like', "%{$query}%");
         })
-        ->with(['images', 'location'])
+        ->with(['images', 'location', 'category'])
         ->get();
 
         return response()->json($posts);
@@ -168,7 +170,8 @@ class PostController extends Controller
             'body'  => 'required',
             'phone_number' => 'required',
             'price' => 'required',
-            'location_id' => 'required'
+            'location_id' => 'required',
+            'category_id' => 'required'
         ]);
 
         $post->title = $validated['title'];
@@ -176,6 +179,7 @@ class PostController extends Controller
         $post->phone_number = $validated['phone_number'];
         $post->price = $validated['price'];
         $post->location_id = $validated['location_id'];
+        $post->category_id = $validated['category_id'];
         $post->save();
 
         $imageUrls = [];

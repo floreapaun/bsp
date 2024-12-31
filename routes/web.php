@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
         return response()->json(Auth::user());
     });
     Route::get('/locations', [LocationController::class, 'index']);
+    Route::get('/categories', [CategoryController::class, 'index']);
 });
 
 require __DIR__.'/auth.php';

@@ -22,6 +22,14 @@
                 class="bg-white rounded-lg shadow-md p-4 sm:p-6 transition-transform hover:scale-105 overflow-hidden flex flex-col"
             >
                 <h2 class="text-lg sm:text-xl md:text-2xl font-semibold mb-2 text-gray-800">{{ post.title }}</h2>
+
+                <div class="m-2 flex flex-col items-center justify-center">
+                    <!-- Location Text with Hover Effect -->
+                    <span class="text-xl font-semibold text-indigo-600 bg-indigo-100 rounded-lg px-4 py-2 shadow-lg hover:bg-indigo-200 transition duration-300 ease-in-out transform hover:scale-105">
+                        Category: {{ post.category.name }}
+                    </span>
+                </div>
+                
                 <p class="text-gray-700 mb-2 sm:mb-4 text-sm sm:text-base">{{ post.body }}</p>
 
                 <div v-if="post.images && post.images.length > 0" class="flex gap-2 sm:gap-4 overflow-x-auto mt-2">
@@ -130,6 +138,24 @@
                 <span v-if="errors.price" class="text-red-600">{{ errors.price }}</span>
 
                 <div :class="{ 'mb-60': isFocused, 'mb-4': !isFocused }">
+                    <label for="category" class="block text-gray-700">Category</label>
+                    <Select
+                        v-model="editedPost.category_id"
+                        id="category"
+                        :options="categories"
+                        optionLabel="name"
+                        optionValue="id"
+                        :virtualScrollerOptions="{ itemSize: 38 }"
+                        placeholder="What's your city?"
+                        class="w-full bg-blue-50 border border-blue-300 text-blue-700 rounded-lg 
+                        shadow-sm focus:ring focus:ring-blue-300 focus:border-blue-500 z-100"
+                        @focus="isFocused = true"
+                        @blur="isFocused = false"
+                    />
+                    <span v-if="errors.category_id" class="text-red-600">{{ errors.category_id }}</span>
+                </div>
+
+                <div :class="{ 'mb-60': isFocused, 'mb-4': !isFocused }">
                     <label for="location" class="block text-gray-700">Location</label>
                     <Select
                         v-model="editedPost.location_id"
@@ -147,7 +173,6 @@
                     />
                     <span v-if="errors.location_id" class="text-red-600">{{ errors.location_id }}</span>
                 </div>
-                
 
                 <!-- Existing Images -->
                 <div v-if="editedPost.images.length > 0" class="mb-4">
@@ -248,10 +273,12 @@ export default {
                 price: 0,
                 phone_number: '',
                 location_id: '',
+                category_id: '',
                 images: [],         
                 newImages: [],
             },
             locations: [],
+            categories: [],
 
             // Holds the preview URLs for display
             previews: [],   
@@ -263,6 +290,7 @@ export default {
     },
     beforeMount() {
         this.fetchLocations();
+        this.fetchCategories();
     },
     mounted() {
         this.fetchPosts();
@@ -368,6 +396,7 @@ export default {
             formData.append('price', this.editedPost.price);
             formData.append('phone_number', this.editedPost.phone_number);
             formData.append('location_id', this.editedPost.location_id);
+            formData.append('category_id', this.editedPost.category_id);
 
             // Append new images to the FormData object
             this.editedPost.newImages.forEach((file, index) => {
@@ -405,6 +434,11 @@ export default {
         fetchLocations() {
             axios.get("/locations").then((response) => {
                  this.locations = response.data;
+            });
+        },
+        fetchCategories() {
+            axios.get("/categories").then((response) => {
+                 this.categories = response.data;
             });
         }
     },
