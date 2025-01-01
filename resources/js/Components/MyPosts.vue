@@ -307,7 +307,6 @@ export default {
             if (!String(this.editedPost.price).trim()) errors.price = "Price is required.";
             else if (isNaN(this.editedPost.price)) errors.price = "Price must be a number.";
             if (!this.editedPost.location_id) errors.location_id = "Location is required.";
-            if (this.editedPost.images.length === 0) errors.images = "At least one image is required.";
 
             this.errors = errors;
             return Object.keys(errors).length === 0;
