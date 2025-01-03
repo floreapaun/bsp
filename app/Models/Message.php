@@ -7,18 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     protected $fillable = [
+        'conversation_id',
         'sender_id',
-        'post_id',
-        'content',
+        'receiver_id',
+        'content'
     ];
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class);
+    }
 
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function post()
+    public function receiver()
     {
-        return $this->belongsTo(Post::class, 'post_id');
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 }

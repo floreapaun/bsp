@@ -52,13 +52,9 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
-    public function sentMessages()
+    public function conversations()
     {
-        return $this->hasMany(Message::class, 'sender_id');
-    }
-
-    public function receivedMessages()
-    {
-        return $this->hasMany(Message::class, 'receiver_id');
+        return $this->hasMany(Conversation::class, 'user_one_id')
+                    ->orWhere('user_two_id', $this->id);
     }
 }

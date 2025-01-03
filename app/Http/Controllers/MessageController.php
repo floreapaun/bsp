@@ -1,38 +1,54 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
+use App\Models\Conversation;
 use App\Models\Message;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    public function sendMessage(Request $request)
+    public function index($conversationId)
+    {
+        return Message::where('conversation_id', $conversationId)
+        ->where(function ($query) {
+            $query->where('sender_id', auth()->id())
+                  ->orWhere('sender_id', '!=', auth()->id());
+        })
+        ->with(['sender', 'receiver'])
+        ->get();    
+    }
+
+    public function show($id)
+    {
+        $conversation = Conversation::with('messages.sender')
+            ->where('id', $id)
+            ->firstOrFail();
+
+        return $conversation;
+    }
+
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'sender_id' => 'required|exists:users,id',
-            'post_id' => 'required|exists:posts,id',
+            'conversation_id' => 'required|exists:conversations,id',
+            'receiver_id' => 'required',
             'content' => 'required|string',
         ]);
 
         $message = Message::create([
-            'sender_id' => $validated['sender_id'],
-            'post_id' => $validated['post_id'],
+            'conversation_id' => $validated['conversation_id'],
+            'sender_id' => auth()->id(),
+            'receiver_id' => $validated['receiver_id'],
             'content' => $validated['content'],
         ]);
 
         return response()->json($message, 201);
     }
 
-    public function getMessages($postId)
+    public function lastMessage($conversationId)
     {
-        $messages = Message::where('post_id', $postId)
-            ->with(['sender']) 
-            ->orderBy('created_at', 'asc') 
-            ->get();
-
-    
-        return response()->json($messages);
+        return Message::where('conversation_id', $conversationId)
+        ->latest('created_at') 
+        ->first(); 
     }
-
 }

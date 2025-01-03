@@ -51,6 +51,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     My posts
                                 </NavLink>
+                                <NavLink
+                                    :href="route('messenger')"
+                                    :active="route().current('messenger')"
+                                >
+                                    Messenger
+                                </NavLink>
                             </div>
                         </div>
 
@@ -184,7 +190,10 @@ const showingNavigationDropdown = ref(false);
                             </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('my-posts')">
                                 My posts
-                            </ResponsiveNavLink>        
+                            </ResponsiveNavLink>  
+                            <ResponsiveNavLink :href="route('messenger')">
+                                Messenger
+                            </ResponsiveNavLink>      
                             <ResponsiveNavLink
                                 :href="route('logout')"
                                 method="post"

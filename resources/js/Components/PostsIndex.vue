@@ -72,27 +72,41 @@
                     >
                         Contact Seller
                     </button>
-                    <p v-if="visiblePhoneNumbers[post.id]" class="mt-2 text-lg text-gray-800">
-                        📞 {{ post.phone_number }}
-                    </p>
+
+                    <div v-if="visiblePhoneNumbers[post.id]" class="mt-4 p-4 bg-gray-50 rounded-lg shadow-md">
+                        <div class="flex flex-col items-center space-y-4">
+                            <!-- Phone Number Display -->
+                            <p class="text-lg font-semibold text-gray-800">
+                            📞 {{ post.phone_number }}
+                            </p>
+
+                            <!-- Input Field -->
+                            <input
+                                v-model="newMessages[post.id]"
+                                placeholder="Type a message for the seller"
+                                class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+
+                            <!-- Error Message -->
+                            <div class="mt-4 flex flex-col items-center justify-center">
+                                <p v-if="errors[post.id]" class="text-red-500 text-sm mt-1">{{ errors[post.id] }}</p>
+                            </div>
+
+                            <!-- Send Button -->
+                            <button
+                                @click="sendMessage(post.id, post.user_id)"
+                                class="px-6 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            >
+                            Send
+                            </button>
+                            <div v-if="countdown > 0" class="text-lg text-gray-800">
+                                Redirecting in {{ countdown }} seconds...
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
-                
-                <div class="mt-4 flex flex-col items-center justify-center">
-                    <button
-                        @click="toggleChat(post.id)"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    >
-                        {{ isChatVisible(post.id) ? "Hide Chat" : "Show Chat" }}
-                    </button>
-                    <div
-                        v-if="isChatVisible(post.id)"
-                        class="mt-4 flex flex-col items-center justify-center"
-                    >
-                        <Chat :postId="post.id" :senderId="authenticatedUser.id" />
-                    </div>
-                </div>
-                
 
             </div>
         </div>
@@ -125,7 +139,6 @@ export default {
     },
     data() {
         return {
-            visibleChats: [], 
             posts: [],
             authenticatedUser: null,
             loading: true,
@@ -133,7 +146,9 @@ export default {
             selectedImage: null,
             visiblePhoneNumbers: [],
             searchQuery: '',
-            
+            newMessages: {},
+            countdown: 0,
+            errors: {},
         };
     },
     mounted() {
@@ -176,11 +191,51 @@ export default {
                 this.visiblePhoneNumbers[postId] = !this.visiblePhoneNumbers[postId];
             }
         },
-        toggleChat(postId) {
-            this.visibleChats[postId] = this.visibleChats[postId] === 1 ? 0 : 1;
+        async sendMessage(postId, receiverUserId) {
+
+            if (!this.newMessages[postId] || this.newMessages[postId].trim() === "") {
+                // If the message is empty or only whitespace, show an error
+                this.errors[postId] = "Message cannot be empty.";
+                return;
+            }
+
+            if (this.newMessages[postId].length > 500) {
+                // If the message exceeds 500 characters, show an error
+                this.errors[postId] = "Message cannot exceed 500 characters.";
+                return;
+            }
+
+            // Clear errors if validation passes
+            this.errors[postId] = null;
+            
+            let conversation = await axios.post('/conversations', { 
+                post_id: postId,
+                user_two_id: receiverUserId,
+            });
+            console.log(conversation);
+            console.log(receiverUserId);
+            await axios.post('/messages', {
+                conversation_id: conversation.data.id,
+                receiver_id: receiverUserId,
+                content: this.newMessages[postId],
+            });
+            this.newMessages[postId] = '';
+            this.startCountdown();
         },
-        isChatVisible(postId) {
-            return this.visibleChats[postId] === 1;
+        startCountdown() {
+            this.countdown = 5;
+
+            const interval = setInterval(() => {
+                if (this.countdown > 1) {
+                    this.countdown -= 1; 
+                } else {
+                    clearInterval(interval); 
+                    this.redirectToPage(); 
+                }
+            }, 1000);
+        },
+        redirectToPage() {
+            window.location.href = "/messenger";
         },
         handleSearch: debounce(function () {
             if (this.searchQuery.trim() === '') {

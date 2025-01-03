@@ -6,6 +6,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ConversationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,8 +38,14 @@ Route::get('/my-posts', function () {
     return Inertia::render('MyPosts');
 })->middleware(['auth', 'verified'])->name('my-posts');
 
+Route::get('/messenger', function () {
+    return Inertia::render('Messenger');
+})->middleware(['auth', 'verified'])->name('messenger');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return response()->json(Auth::user());
+    });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -52,13 +59,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/images/{id}', [ImageController::class, 'destroy']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);
     Route::patch('/posts/{id}', [PostController::class, 'updateActive'])->middleware(CheckAdmin::class);
-    Route::post('/messages', [MessageController::class, 'sendMessage']);
-    Route::get('/messages/{postId}', [MessageController::class, 'getMessages']);
-    Route::get('/user', function (Request $request) {
-        return response()->json(Auth::user());
-    });
     Route::get('/locations', [LocationController::class, 'index']);
     Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/conversations/{id}', [MessageController::class, 'show']);
+    Route::get('/auth_conversations/', [ConversationController::class, 'index']);
+    Route::post('/conversations', [ConversationController::class, 'store']);
+    Route::post('/messages', [MessageController::class, 'store']);
+    Route::get('/messages/{conversationId}', [MessageController::class, 'index']);
+    Route::get('/last_message/{conversationId}', [MessageController::class, 'lastMessage']);
 });
 
 require __DIR__.'/auth.php';

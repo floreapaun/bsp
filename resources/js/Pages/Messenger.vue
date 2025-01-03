@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import MyPosts from '@/Components/MyPosts.vue';
+import Chat from '@/Components/Chat.vue';
 </script>
 
 <template>
-    <Head title="My posts" />
+    <Head title="Messenger" />
     <AuthenticatedLayout>
         <template #header>
         </template>
@@ -13,7 +13,7 @@ import MyPosts from '@/Components/MyPosts.vue';
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="py-6 text-gray-900">
-                        <MyPosts/>
+                        <Chat/>
                     </div>
                 </div>
             </div>
