@@ -36,7 +36,7 @@
 ![Add item](https://i.ibb.co/2g7mKHT/Screenshot-2025-01-03-at-19-52-25-Dashboard-Laravel.png)
 
 ### Admin approves a post
-![Chat](https://i.ibb.co/1mmrCZF/Screenshot-2025-01-03-195730.png)
+![Chat](https://i.postimg.cc/Jny8ms43/ssap.png)
 
 ### List items
 ![List items](https://i.ibb.co/0Mtjz9S/Screenshot-2025-01-03-at-19-33-05-Dashboard-Laravel.png)
