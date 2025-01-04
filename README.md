@@ -18,10 +18,11 @@
 11. Run Vite server with `npm run dev`
 
 ## Features
- - Users can add items for sales with picture
+ - Users can add items for sales 
  - In order the post to appear on items for sales dashboard the administrator must approve the post
  - Search by name or content feature
  - Users can edit items
+ - Users can interchange messages on a specific item 
 
 ## Admin user
 `email`: administrator@bsp.platform
@@ -32,13 +33,18 @@
 ![Home page](https://i.ibb.co/166Cdff/Screenshot-2024-12-09-at-15-53-10-Welcome-Laravel.png)
 
 ### Add item
-![Add item](https://i.ibb.co/gyh8hpr/Screenshot-2024-12-09-at-16-06-13-Dashboard-Laravel.png)
+![Add item](https://i.ibb.co/2g7mKHT/Screenshot-2025-01-03-at-19-52-25-Dashboard-Laravel.png)
+
+### Admin approves a post
+![Chat](https://i.postimg.cc/Jny8ms43/ssap.png)
 
 ### List items
-![List items](https://i.ibb.co/TLs6n33/Screenshot-2024-12-09-at-15-26-17-Dashboard-Laravel.png)
+![List items](https://i.ibb.co/0Mtjz9S/Screenshot-2025-01-03-at-19-33-05-Dashboard-Laravel.png)
 
 ### Edit item
-![Edit item](https://i.ibb.co/3mzTDR8/Screenshot-2024-12-09-at-15-28-46-Dashboard-Laravel.png)
+![Edit item](https://i.ibb.co/w002GrD/Screenshot-2025-01-03-at-19-34-01-My-posts-Laravel.png)
 
 ### Chat
-![Chat](https://i.ibb.co/7ynSYHS/chat.png)
+![Chat](https://i.ibb.co/Xys5KBc/Screenshot-2025-01-03-at-19-38-02-Messenger-Laravel.png)
+
+
