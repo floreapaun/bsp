@@ -56,7 +56,7 @@
       </div>
 
       <!-- Category Input -->
-      <div :class="{ 'mt-60': isFocused, 'mb-4': !isFocused }">
+      <div :class="{ 'mt-60': isFocusedCategorySelect, 'mb-4': !isFocusedCategorySelect }">
         <Select
           v-model="category_id"
           id="category"
@@ -66,26 +66,25 @@
           :virtualScrollerOptions="{ itemSize: 38 }"
           placeholder="What's the post category?"
           class="w-full p-2 border rounded focus:mt-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          @focus="isFocused = true"
-          @blur="isFocused = false"
+          @focus="isFocusedCategorySelect = true"
+          @blur="isFocusedCategorySelect = false"
         />
         <span v-if="errors.category_id" class="text-red-600">{{ errors.category_id }}</span>
       </div>
 
       <!-- Location Input -->
-      <div :class="{ 'mt-60': isFocused, 'mb-4': !isFocused }">
+      <div :class="{ 'mt-60': isFocusedLocationSelect, 'mb-4': !isFocusedLocationSelect }">
         <Select
           v-model="location_id"
           id="location"
           :options="locations"
           optionLabel="name"
-          editable
           optionValue="id"
           :virtualScrollerOptions="{ itemSize: 38 }"
           placeholder="What's your city?"
           class="w-full p-2 border rounded focus:mt-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          @focus="isFocused = true"
-          @blur="isFocused = false"
+          @focus="isFocusedLocationSelect = true"
+          @blur="isFocusedLocationSelect = false"
         />
         <span v-if="errors.location_id" class="text-red-600">{{ errors.location_id }}</span>
       </div>
@@ -147,7 +146,8 @@ export default {
       
       // Holds validation errors
       errors: {}, 
-      isFocused: false,
+      isFocusedCategorySelect: false,
+      isFocusedLocationSelect: false,
     };
   },
   beforeMount() {
