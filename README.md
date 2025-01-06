@@ -18,11 +18,20 @@
 11. Run Vite server with `npm run dev`
 
 ## Features
- - Users can add items for sales 
- - In order the post to appear on items for sales dashboard the administrator must approve the post
- - Search by name or content feature
- - Users can edit items
- - Users can interchange messages on a specific item 
+#### User-Generated Sales Posts:
+Users can create posts to list items for sale, providing details such as name, description, price, and images.
+
+#### Administrator Approval Process:
+To ensure quality and compliance, all user-submitted posts require administrator approval before appearing on the "Items for Sale" dashboard.
+
+#### Advanced Search Functionality:
+Buyers can easily find items using a powerful search feature that filters posts by name or content keywords.
+
+#### Post Editing:
+Users can modify their posts to update details, such as price changes or additional information, even after submission.
+
+#### In-App Messaging:
+Users can communicate directly with each other through an integrated messaging system tied to specific items, enabling seamless negotiation and discussion.
 
 ## Admin user
 `email`: administrator@bsp.platform
