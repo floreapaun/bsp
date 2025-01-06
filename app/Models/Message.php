@@ -10,7 +10,8 @@ class Message extends Model
         'conversation_id',
         'sender_id',
         'receiver_id',
-        'content'
+        'content',
+        'is_read'
     ];
 
     public function conversation()

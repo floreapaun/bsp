@@ -162,7 +162,6 @@ export default {
             try {
                 const response = await axios.get('/posts');
                 this.posts = response.data;
-                console.log(this.posts);
             } catch (error) {
                 console.error("Error fetching posts:", error);
             } finally {
@@ -173,7 +172,6 @@ export default {
             axios.get('/user')
                 .then(response => {
                     this.authenticatedUser = response.data;
-                    console.log(this.authenticatedUser);
                 })
                 .catch(error => {
                     console.error('Error fetching user:', error);

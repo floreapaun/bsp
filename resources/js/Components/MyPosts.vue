@@ -315,7 +315,6 @@ export default {
             try {
                 const response = await axios.get('/posts/user');
                 this.posts = response.data;
-                console.log(this.posts);
             } catch (error) {
                 console.error("Error fetching posts:", error);
             } finally {

@@ -51,4 +51,14 @@ class MessageController extends Controller
         ->latest('created_at') 
         ->first(); 
     }
+
+    public function markAsRead(Request $request)
+    {
+        $messageIds = $request->input('message_ids');
+
+        Message::whereIn('id', $messageIds)
+            ->update(['is_read' => true]);
+
+        return response()->json(['success' => true]);
+    }
 }

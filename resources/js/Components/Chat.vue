@@ -27,7 +27,22 @@
           <strong class="block text-sm font-medium text-gray-700">
             {{ message.sender_name }}:
           </strong>
-          <span class="text-gray-900 text-base">{{ message.content }}</span>
+          
+          <div class="flex items-center justify-between space-x-2">
+            <!-- Message Content -->
+            <span class="text-gray-900 text-base font-medium">
+              {{ message.content }}
+            </span>
+
+            <!-- Read Status -->
+            <span
+              class="text-xs font-semibold px-2 py-1 rounded-full"
+              :class="message.is_read ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+            >
+              {{ message.is_read ? 'Read' : 'Unread' }}
+            </span>
+          </div>
+
         </li>
       </ul>
 
@@ -84,7 +99,7 @@
       }
     },
     methods: {
-        validateForm() {
+      validateForm() {
         const errors = {};
         if (!this.category_id) 
           errors.category_id = "Category is required.";
@@ -102,13 +117,26 @@
             let database_messages = await this.fetchConversation(element.id);            
             database_messages.forEach(e => {
               this.messages.push({ 
-                conversation_id: element.id, 
+                conversation_id: element.id,
+                id: e.id, 
                 sender_name: e.sender.name, 
                 receiver_name: e.receiver.name, 
+                is_read: e.is_read,
                 content: e.content
               });
             });
-        }
+          }
+
+          // Extract unread message IDs
+          let unreadMessageIds = this.messages
+          .filter(message => message.is_read === 0 && message.sender_name != this.user.name)
+          .map(message => message.id);  
+
+          if (unreadMessageIds.length > 0) {
+            await this.markMessagesAsRead(unreadMessageIds);
+            this.messages = [];
+            this.fetchMessages();
+          }
       },
 
       async fetchConversations() {
@@ -150,6 +178,12 @@
         this.newMessages[conversationId] = '';
         this.messages = [];
         this.fetchConversations();
+      },
+
+      async markMessagesAsRead(messageIds) {
+        await axios.post('/messages/mark-as-read', {
+          message_ids: messageIds,
+        });
       },
     },
   };
