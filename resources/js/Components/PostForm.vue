@@ -55,6 +55,20 @@
         <span v-if="errors.body" class="text-red-600">{{ errors.body }}</span>
       </div>
 
+      <div class="flex items-center justify-center m-4 p-3">
+        <label for="condition" class="mr-4 font-semibold text-gray-700">Condition:</label>
+        <select
+            v-model="condition"
+            id="condition"
+            class="w-44 max-w-xs p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            <option value="" disabled selected>Select Condition</option>
+            <option value="new">New</option>
+            <option value="used">Used</option>
+        </select>
+        <span v-if="errors.condition" class=" mx-10 text-red-600">{{ errors.condition }}</span>
+      </div>
+
       <!-- Category Input -->
       <div>
         <label for="category" class="block text-gray-700">Category</label>
@@ -142,6 +156,7 @@ export default {
       body: "",
       phoneNumber: "",
       price: "",
+      condition: '',
       location_id: "",
       category_id: "",
       images: [],
@@ -153,8 +168,6 @@ export default {
       
       // Holds validation errors
       errors: {}, 
-      isFocusedCategorySelect: false,
-      isFocusedLocationSelect: false,
     };
   },
   beforeMount() {
@@ -172,6 +185,7 @@ export default {
       if (!this.price.trim()) errors.price = "Price is required.";
       else if (isNaN(this.price)) errors.price = "Price must be a number.";
       if (!this.location_id) errors.location_id = "Location is required.";
+      if (!this.condition) errors.condition = "Condition is required.";
       if (!this.category_id) errors.category_id = "Category is required.";
       if (this.images.length === 0) errors.images = "At least one image is required.";
 
@@ -192,8 +206,9 @@ export default {
         formData.append("price", this.price);
         formData.append("location_id", this.location_id);
         formData.append("category_id", this.category_id);
+        formData.append("condition", this.condition);
 
-        const response = await axios.post("http://localhost:8000/posts", formData);
+        const response = await axios.post("/posts", formData);
         this.successMessage = "Post created successfully!";
         this.resetForm();
       } catch (err) {

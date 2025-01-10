@@ -132,45 +132,64 @@
                 <input type="text" v-model="editedPost.phone_number" class="w-full p-2 mb-4 border rounded-lg" />
                 <span v-if="errors.phoneNumber" class="text-red-600">{{ errors.phoneNumber }}</span>
 
+                <div class="flex items-center justify-center m-4 p-3">
+                    <label for="condition" class="mr-4 font-semibold text-gray-700">Condition:</label>
+                    <select
+                        v-model="editedPost.condition"
+                        id="condition"
+                        class="w-44 max-w-xs p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="" disabled selected>Select Condition</option>
+                        <option value="new">New</option>
+                        <option value="used">Used</option>
+                    </select>
+                    <span v-if="errors.condition" class=" mx-10 text-red-600">{{ errors.condition }}</span>
+                </div>
+
                 <!-- Post Price -->
                 <label class="block mb-2 text-sm font-medium text-gray-700">Price (&euro;)</label>
                 <input type="number" v-model="editedPost.price" class="w-full p-2 mb-4 border rounded-lg" />
                 <span v-if="errors.price" class="text-red-600">{{ errors.price }}</span>
 
-                <div :class="{ 'mb-60': isFocused, 'mb-4': !isFocused }">
+                <div>
                     <label for="category" class="block text-gray-700">Category</label>
-                    <Select
+                    <select
                         v-model="editedPost.category_id"
                         id="category"
-                        :options="categories"
-                        optionLabel="name"
-                        optionValue="id"
-                        :virtualScrollerOptions="{ itemSize: 38 }"
-                        placeholder="What's your city?"
-                        class="w-full bg-blue-50 border border-blue-300 text-blue-700 rounded-lg 
-                        shadow-sm focus:ring focus:ring-blue-300 focus:border-blue-500 z-100"
-                        @focus="isFocused = true"
-                        @blur="isFocused = false"
-                    />
+                        class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        @focus="isFocusedCategorySelect = true"
+                        @blur="isFocusedCategorySelect = false"
+                    >
+                        <option value="" disabled selected>What's the post category?</option>
+                        <option
+                            v-for="category in categories"
+                            :key="category.id"
+                            :value="category.id"
+                        >
+                            {{ category.name }}
+                        </option>
+                     </select>
                     <span v-if="errors.category_id" class="text-red-600">{{ errors.category_id }}</span>
                 </div>
 
-                <div :class="{ 'mb-60': isFocused, 'mb-4': !isFocused }">
+                <div>
                     <label for="location" class="block text-gray-700">Location</label>
-                    <Select
+                    <select
                         v-model="editedPost.location_id"
                         id="location"
-                        :options="locations"
-                        optionLabel="name"
-                        editable
-                        optionValue="id"
-                        :virtualScrollerOptions="{ itemSize: 38 }"
-                        placeholder="What's your city?"
-                        class="w-full bg-blue-50 border border-blue-300 text-blue-700 rounded-lg 
-                        shadow-sm focus:ring focus:ring-blue-300 focus:border-blue-500 z-100"
-                        @focus="isFocused = true"
-                        @blur="isFocused = false"
-                    />
+                        class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        @focus="isFocusedLocationSelect = true"
+                        @blur="isFocusedLocationSelect = false"
+                     >
+                        <option value="" disabled selected>What's your city?</option>
+                        <option
+                            v-for="location in locations"
+                            :key="location.id"
+                            :value="location.id"
+                        >
+                            {{ location.name }}
+                        </option>
+                    </select>
                     <span v-if="errors.location_id" class="text-red-600">{{ errors.location_id }}</span>
                 </div>
 
@@ -251,13 +270,8 @@
 <script>
 import axios from 'axios';
 import { debounce } from 'lodash';
-import Select from "primevue/select";
 
-export default {
-    components: {
-        Select,
-    },
-    
+export default {    
     data() {
         return {
             posts: [],
@@ -271,6 +285,7 @@ export default {
                 title: '',
                 body: '',
                 price: 0,
+                condition: '',
                 phone_number: '',
                 location_id: '',
                 category_id: '',
@@ -285,7 +300,6 @@ export default {
             
             // Holds validation errors
             errors: {}, 
-            isFocused: false,
         };
     },
     beforeMount() {
@@ -298,7 +312,6 @@ export default {
     methods: {
         validateForm() {
             const errors = {};
-            console.log(this.editedPost.price);
 
             if (!this.editedPost.title.trim()) errors.title = "Title is required.";
             if (!this.editedPost.body.trim()) errors.body = "Body is required.";
@@ -327,7 +340,6 @@ export default {
         },
         handleSearch: debounce(function () {
             if (this.searchQuery.trim() === '') {
-                this.posts = []; // Clear results if input is empty
                 this.loading = false;
                 return;
             }
@@ -395,6 +407,7 @@ export default {
             formData.append('phone_number', this.editedPost.phone_number);
             formData.append('location_id', this.editedPost.location_id);
             formData.append('category_id', this.editedPost.category_id);
+            formData.append("condition", this.editedPost.condition);
 
             // Append new images to the FormData object
             this.editedPost.newImages.forEach((file, index) => {

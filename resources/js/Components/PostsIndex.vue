@@ -71,6 +71,22 @@
                     />
                 </div>
             </div>
+
+            <!-- Condition Filters -->
+            <div class="flex flex-col items-center">
+                <label for="condition-filter" class="text-sm font-semibold text-gray-700 mb-1">Condition</label>
+                <select
+                    id="category-filter"
+                    v-model="selectedCondition"
+                    @change="filterPosts"
+                    class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 w-44"
+                >
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
+                </select>
+            </div>
+
+
         </div>
 
         <div v-if="!loading && posts.length === 0" class="text-center text-gray-500">
@@ -95,7 +111,6 @@
                 </div>
 
                 <p class="text-gray-700 mb-4 overflow-hidden text-ellipsis">{{ post.body }}</p>
-
                 <div v-if="post.images && post.images.length > 0" class="flex gap-4 overflow-x-auto">
                     <img
                         v-for="image in post.images"
@@ -127,6 +142,23 @@
                         Price: {{ post.price }} &euro;
                     </button>
                 </div>
+
+                <div class="flex items-center justify-center mt-1">
+                    <button 
+                        id="condition-button" 
+                        class="flex items-center space-x-2 bg-purple-100 text-pink-700 font-bold text-sm sm:text-base px-3 py-2 rounded-lg shadow-md"
+                    >
+                        <!-- Checkmark Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <!-- Condition Text -->
+                        <span>Condition: {{ post.condition }}</span>
+                    </button>
+                </div>
+
+
+
 
                 <!-- Contact Seller Section -->
                 <div class="mt-4 flex flex-col items-center justify-center">
@@ -213,6 +245,7 @@ export default {
             errors: {},
             selectedCategory: "",
             selectedLocation: "",
+            selectedCondition: "",
             priceRange: {
                 min: null,
                 max: null,
@@ -326,6 +359,7 @@ export default {
                 category: this.selectedCategory || null,
                 minPrice: this.priceRange.min || null,
                 maxPrice: this.priceRange.max || null,
+                condition: this.selectedCondition || null,
             };
 
             axios

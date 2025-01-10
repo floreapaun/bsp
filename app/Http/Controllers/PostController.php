@@ -58,7 +58,8 @@ class PostController extends Controller
             'phoneNumber' => 'required',
             'price' => 'required',
             'location_id' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
+            'condition' => 'required'
         ]);
 
         // Create a new post
@@ -75,6 +76,7 @@ class PostController extends Controller
         $post->price = $validated['price'];
         $post->location_id = $validated['location_id'];
         $post->category_id = $validated['category_id'];
+        $post->condition = $validated['condition'];
         $post->user_id = auth()->id(); 
         $post->save();
         
@@ -111,6 +113,7 @@ class PostController extends Controller
         $category = $request->input('category');
         $minPrice = $request->input('minPrice');
         $maxPrice = $request->input('maxPrice');
+        $condition = $request->input('condition');
 
         $posts = Post::query();
 
@@ -130,6 +133,11 @@ class PostController extends Controller
         // Filter by location
         if ($location) {
             $posts->where('location_id', $location);
+        }
+
+        // Filter by condition
+        if ($condition) {
+            $posts->where('condition', $condition);
         }
 
         // Filter by price range
@@ -203,7 +211,8 @@ class PostController extends Controller
             'phone_number' => 'required',
             'price' => 'required',
             'location_id' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
+            'condition' => 'required'
         ]);
 
         $post->title = $validated['title'];
@@ -212,6 +221,7 @@ class PostController extends Controller
         $post->price = $validated['price'];
         $post->location_id = $validated['location_id'];
         $post->category_id = $validated['category_id'];
+        $post->condition = $validated['condition'];
         $post->save();
 
         $imageUrls = [];
