@@ -25,7 +25,7 @@ Users can create posts to list items for sale, providing details such as name, d
 To ensure quality and compliance, all user-submitted posts require administrator approval before appearing on the "Items for Sale" dashboard.
 
 #### Advanced Search Functionality:
-Buyers can easily find items using a powerful search feature that filters posts by name or content keywords, as well as by location, category, and price.
+Buyers can easily find items using a powerful search feature that filters posts by name or content keywords, as well as by location, category, price and condition.
 
 #### Post Editing:
 Users can modify their posts to update details, such as price changes or additional information, even after submission.
@@ -42,22 +42,22 @@ Users can communicate directly with each other through an integrated messaging s
 ![Home page](https://i.ibb.co/166Cdff/Screenshot-2024-12-09-at-15-53-10-Welcome-Laravel.png)
 
 ### Add item
-![Add item](https://i.ibb.co/2g7mKHT/Screenshot-2025-01-03-at-19-52-25-Dashboard-Laravel.png)
+![Add item](https://i.ibb.co/rFYkpdf/Screenshot-2025-01-10-at-18-25-11-Dashboard-Laravel.png)
 
 ### Admin approves a post
 ![Chat](https://i.postimg.cc/Jny8ms43/ssap.png)
 
 ### List items
-![List items](https://i.ibb.co/Sfc0rJJ/Screenshot-2025-01-10-at-13-13-46-Dashboard-Laravel.png)
+![List items](https://i.ibb.co/XYwV3Q2/Screenshot-2025-01-10-at-18-26-15-Dashboard-Laravel.png)
 
 ### Edit item
-![Edit item](https://i.ibb.co/w002GrD/Screenshot-2025-01-03-at-19-34-01-My-posts-Laravel.png)
+![Edit item](https://i.ibb.co/VS8qJ60/Screenshot-2025-01-10-at-18-26-47-My-posts-Laravel.png)
 
 ### Chat
 ![Chat](https://i.ibb.co/v1vV2JN/Screenshot-2025-01-06-at-16-23-26-Messenger-Laravel.png)
 
 ### Apply filters
-![Apply filters](https://i.ibb.co/q1S24FS/Screenshot-2025-01-10-at-13-07-01-Dashboard-Laravel.png)
+![Apply filters](https://i.ibb.co/RHXjq19/Screenshot-2025-01-10-at-18-27-27-Dashboard-Laravel.png)
 
 
 
