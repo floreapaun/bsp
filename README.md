@@ -57,7 +57,7 @@ Users can communicate directly with each other through an integrated messaging s
 ![Chat](https://i.ibb.co/v1vV2JN/Screenshot-2025-01-06-at-16-23-26-Messenger-Laravel.png)
 
 ### Apply filters
-![Apply filters](https://i.ibb.co/RHXjq19/Screenshot-2025-01-10-at-18-27-27-Dashboard-Laravel.png)
+![Apply filters](https://i.ibb.co/twRqhT8/Screenshot-2025-01-10-at-18-33-51-Dashboard-Laravel.png)
 
 
 
