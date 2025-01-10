@@ -56,41 +56,52 @@
       </div>
 
       <!-- Category Input -->
-      <div :class="{ 'mt-60': isFocusedCategorySelect, 'mb-4': !isFocusedCategorySelect }">
-        <Select
+      <div>
+        <label for="category" class="block text-gray-700">Category</label>
+        <select
           v-model="category_id"
           id="category"
-          :options="categories"
-          optionLabel="name"
-          optionValue="id"
-          :virtualScrollerOptions="{ itemSize: 38 }"
-          placeholder="What's the post category?"
-          class="w-full p-2 border rounded focus:mt-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           @focus="isFocusedCategorySelect = true"
           @blur="isFocusedCategorySelect = false"
-        />
+        >
+          <option value="" disabled selected>What's the post category?</option>
+          <option
+              v-for="category in categories"
+              :key="category.id"
+              :value="category.id"
+          >
+              {{ category.name }}
+          </option>
+        </select>
+
         <span v-if="errors.category_id" class="text-red-600">{{ errors.category_id }}</span>
       </div>
 
       <!-- Location Input -->
-      <div :class="{ 'mt-60': isFocusedLocationSelect, 'mb-4': !isFocusedLocationSelect }">
-        <Select
+      <div>
+        <label for="location" class="block text-gray-700">Location</label>
+        <select
           v-model="location_id"
           id="location"
-          :options="locations"
-          optionLabel="name"
-          optionValue="id"
-          :virtualScrollerOptions="{ itemSize: 38 }"
-          placeholder="What's your city?"
-          class="w-full p-2 border rounded focus:mt-60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           @focus="isFocusedLocationSelect = true"
           @blur="isFocusedLocationSelect = false"
-        />
+        >
+          <option value="" disabled selected>What's your city?</option>
+          <option
+              v-for="location in locations"
+              :key="location.id"
+              :value="location.id"
+          >
+              {{ location.name }}
+          </option>
+        </select>
         <span v-if="errors.location_id" class="text-red-600">{{ errors.location_id }}</span>
       </div>
 
       <!-- File Upload -->
-      <div class="mb-4">
+      <div class="m-4">
         <input type="file" multiple @change="handleFiles" accept="image/*" />
         <span v-if="errors.images" class="text-red-600">{{ errors.images }}</span>
       </div>
@@ -123,12 +134,8 @@
 
 <script>
 import axios from "axios";
-import Select from "primevue/select";
 
 export default {
-  components: {
-    Select,
-  },
   data() {
     return {
       title: "",
