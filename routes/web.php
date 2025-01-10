@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('posts/all', [PostController::class, 'indexAll'])->name('posts.indexAll');
     Route::get('/posts/user/', [PostController::class, 'indexUser'])->name('posts.user');
-    Route::get('/posts/search/', [PostController::class, 'search']);
+    Route::get('/posts/search/filter', [PostController::class, 'searchByFilter']);
     Route::get('/posts/search/user/', [PostController::class, 'searchUser']);
     Route::post('/posts/{id}', [PostController::class, 'update']);
     Route::delete('/images/{id}', [ImageController::class, 'destroy']);

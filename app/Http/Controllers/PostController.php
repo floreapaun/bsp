@@ -103,14 +103,46 @@ class PostController extends Controller
 
     }
 
-    public function search(Request $request)
+    public function searchByFilter(Request $request)
     {
+        // Fetch query parameters
         $query = $request->input('query');
+        $location = $request->input('location');
+        $category = $request->input('category');
+        $minPrice = $request->input('minPrice');
+        $maxPrice = $request->input('maxPrice');
 
-        // Search posts by title or content
-        $posts = Post::with(['images', 'location', 'category'])->where('title', 'like', "%{$query}%")
-                     ->orWhere('body', 'like', "%{$query}%")
-                     ->get();
+        $posts = Post::query();
+
+        // Search by title or body
+        if ($query) {
+            $posts->where(function ($q) use ($query) {
+                $q->where('title', 'LIKE', '%' . $query . '%')
+                  ->orWhere('body', 'LIKE', '%' . $query . '%');
+            });
+        }
+
+        // Filter by category
+        if ($category) {
+            $posts->where('category_id', $category);
+        }
+
+        // Filter by location
+        if ($location) {
+            $posts->where('location_id', $location);
+        }
+
+        // Filter by price range
+        if ($minPrice !== null) {
+            $posts->where('price', '>=', $minPrice);
+        }
+
+        if ($maxPrice !== null) {
+            $posts->where('price', '<=', $maxPrice);
+        }
+
+        // Include related models 
+        $posts = $posts->with(['images', 'category', 'location'])->get();
 
         return response()->json($posts);
     }

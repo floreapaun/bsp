@@ -3,18 +3,82 @@
         <input
             type="text"
             v-model="searchQuery"
-            @input="handleSearch"
+            @input="filterPosts"
             placeholder="Search posts..."
             class="w-full p-2 mb-4 border rounded-lg"
         />
 
-        <div v-if="loading" class="text-center text-gray-500">Searching...</div>
+        <!-- Filters -->
+        <div class="flex flex-wrap items-center justify-center gap-4 m-4 p-4 bg-gray-50 rounded-lg shadow-md">
+            <!-- Location Filter -->
+            <div class="flex flex-col items-center">
+                <label for="location-filter" class="text-sm font-semibold text-gray-700 mb-1">Location</label>
+                <select
+                    id="location-filter"
+                    v-model="selectedLocation"
+                    @change="filterPosts"
+                    class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 w-44"
+                >
+                    <option value="">All Locations</option>
+                    <option
+                        v-for="location in locations"
+                        :key="location.id"
+                        :value="location.id"
+                    >
+                        {{ location.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="flex flex-col items-center">
+                <label for="category-filter" class="text-sm font-semibold text-gray-700 mb-1">Category</label>
+                <select
+                    id="category-filter"
+                    v-model="selectedCategory"
+                    @change="filterPosts"
+                    class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 w-44"
+                >
+                    <option value="">All Categories</option>
+                    <option
+                        v-for="category in categories"
+                        :key="category.id"
+                        :value="category.id"
+                    >
+                        {{ category.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Price Range Filters -->
+            <div class="flex flex-col items-center">
+                <label class="text-sm font-semibold text-gray-700 mb-1">Price Range</label>
+                <div class="flex items-center gap-2">
+                    <input
+                        type="number"
+                        v-model.number="priceRange.min"
+                        @input="filterPosts"
+                        placeholder="Min"
+                        class="p-2 border border-gray-300 rounded-lg shadow-sm w-20 focus:ring focus:ring-blue-300 w-24"
+                    />
+                    <span class="text-gray-500">-</span>
+                    <input
+                        type="number"
+                        v-model.number="priceRange.max"
+                        @input="filterPosts"
+                        placeholder="Max"
+                        class="p-2 border border-gray-300 rounded-lg shadow-sm w-20 focus:ring focus:ring-blue-300 w-24"
+                    />
+                </div>
+            </div>
+        </div>
 
         <div v-if="!loading && posts.length === 0" class="text-center text-gray-500">
             No results found.
         </div>
 
         <div v-if="loading" class="text-center text-gray-500">Loading posts...</div>
+
         <div v-else class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
             <div
                 v-for="post in posts"
@@ -104,10 +168,7 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
-
             </div>
         </div>
 
@@ -130,7 +191,6 @@
 
 <script>
 import axios from 'axios';
-import { debounce } from 'lodash';
 import Chat from './Chat.vue';
 
 export default {
@@ -140,6 +200,8 @@ export default {
     data() {
         return {
             posts: [],
+            categories: [],
+            locations: [],
             authenticatedUser: null,
             loading: true,
             isModalOpen: false,
@@ -149,13 +211,19 @@ export default {
             newMessages: {},
             countdown: 0,
             errors: {},
+            selectedCategory: "",
+            selectedLocation: "",
+            priceRange: {
+                min: null,
+                max: null,
+            },
         };
     },
     mounted() {
         this.fetchPosts();
-    },
-    beforeMount() {
-        this.getUser();
+        this.fetchCategories();
+        this.fetchLocations();
+        this.getAuthenticatedUser();
     },
     methods: {
         async fetchPosts() {
@@ -168,7 +236,23 @@ export default {
                 this.loading = false;
             }
         },
-        async getUser() {
+        async fetchCategories() {
+            try {
+                const response = await axios.get("/categories");
+                this.categories = response.data;
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        },
+        async fetchLocations() {
+            try {
+                const response = await axios.get("/locations");
+                this.locations = response.data;
+            } catch (error) {
+                console.error("Error fetching locations:", error);
+            }
+        },
+        async getAuthenticatedUser() {
             axios.get('/user')
                 .then(response => {
                     this.authenticatedUser = response.data;
@@ -210,8 +294,6 @@ export default {
                 post_id: postId,
                 user_two_id: receiverUserId,
             });
-            console.log(conversation);
-            console.log(receiverUserId);
             await axios.post('/messages', {
                 conversation_id: conversation.data.id,
                 receiver_id: receiverUserId,
@@ -235,37 +317,32 @@ export default {
         redirectToPage() {
             window.location.href = "/messenger";
         },
-        handleSearch: debounce(function () {
-            if (this.searchQuery.trim() === '') {
-                
-                // Clear results if input is empty
-                this.posts = []; 
-                
-                this.loading = false;
-                return;
-            }
-
+        filterPosts() {
             this.loading = true;
+
+            const params = {
+                query: this.searchQuery,
+                location: this.selectedLocation || null,
+                category: this.selectedCategory || null,
+                minPrice: this.priceRange.min || null,
+                maxPrice: this.priceRange.max || null,
+            };
+
             axios
-                .get('/posts/search', {
-                    params: {
-                        query: this.searchQuery,
-                    },
-                })
+                .get("/posts/search/filter", { params })
                 .then((response) => {
                     this.posts = response.data;
                 })
                 .catch((error) => {
-                    console.error("Error fetching search results:", error);
+                    console.error("Error filtering posts:", error);
                 })
                 .finally(() => {
                     this.loading = false;
                 });
-        }, 300), 
+        }, 
     },
 };
 </script>
 
 <style>
-/* Additional styling if needed */
 </style>

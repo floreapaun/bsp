@@ -205,15 +205,21 @@ export default {
         reader.readAsDataURL(file);
       });
     },
-    fetchLocations() {
-      axios.get("/locations").then((response) => {
-        this.locations = response.data;
-      });
+    async fetchLocations() {
+      try {
+          const response = await axios.get("/locations");
+          this.locations = response.data;
+      } catch (error) {
+          console.error("Error fetching locations:", error);
+      }
     },
-    fetchCategories() {
-      axios.get("/categories").then((response) => {
-        this.categories = response.data;
-      });
+    async fetchCategories() {
+      try {
+          const response = await axios.get("/categories");
+          this.categories = response.data;
+      } catch (error) {
+          console.error("Error fetching categories:", error);
+      }
     },
     resetForm() {
       this.title = "";
