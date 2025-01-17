@@ -114,6 +114,7 @@ class PostController extends Controller
         $minPrice = $request->input('minPrice');
         $maxPrice = $request->input('maxPrice');
         $condition = $request->input('condition');
+        $status = intval($request->input('status'));
 
         $posts = Post::query();
 
@@ -139,6 +140,14 @@ class PostController extends Controller
         if ($condition) {
             $posts->where('condition', $condition);
         }
+
+        //dd($status);
+        // Filter by status
+        if ($status === 0 || $status === 1) {
+            $posts->where('is_active', $status);
+        }
+
+        //dd($posts->get());
 
         // Filter by price range
         if ($minPrice !== null) {
@@ -255,13 +264,13 @@ class PostController extends Controller
 
     public function updateActive(Request $request, $id)
     {
-        $request->validate([
-            'is_active' => 'required|boolean', // Validate that is_active is a boolean
+        $validated = $request->validate([
+            'is_active' => 'required|boolean', 
         ]);
 
-        $post = Post::findOrFail($id); // Find the post by ID
-        $post->is_active = $request->is_active; // Set is_active based on request
-        $post->save(); // Save the changes
+        $post = Post::findOrFail($id); 
+        $post->is_active = $validated['is_active']; 
+        $post->save(); 
 
         return response()->json(['message' => 'Post updated successfully', 'post' => $post], 200);
     }

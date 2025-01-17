@@ -157,9 +157,6 @@
                     </button>
                 </div>
 
-
-
-
                 <!-- Contact Seller Section -->
                 <div class="mt-4 flex flex-col items-center justify-center">
                     <button
