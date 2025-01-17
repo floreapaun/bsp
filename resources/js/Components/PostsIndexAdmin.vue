@@ -303,7 +303,7 @@ export default {
             };
 
             axios
-                .get("/posts/search/filter", { params })
+                .get("/posts/search/filter/admin", { params })
                 .then((response) => {
                     this.posts = response.data;
                 })

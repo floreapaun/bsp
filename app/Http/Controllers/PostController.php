@@ -114,6 +114,56 @@ class PostController extends Controller
         $minPrice = $request->input('minPrice');
         $maxPrice = $request->input('maxPrice');
         $condition = $request->input('condition');
+
+        $posts = Post::query();
+
+        // Search by title or body
+        if ($query) {
+            $posts->where(function ($q) use ($query) {
+                $q->where('title', 'LIKE', '%' . $query . '%')
+                  ->orWhere('body', 'LIKE', '%' . $query . '%');
+            });
+        }
+
+        // Filter by category
+        if ($category) {
+            $posts->where('category_id', $category);
+        }
+
+        // Filter by location
+        if ($location) {
+            $posts->where('location_id', $location);
+        }
+
+        // Filter by condition
+        if ($condition) {
+            $posts->where('condition', $condition);
+        }
+
+        // Filter by price range
+        if ($minPrice !== null) {
+            $posts->where('price', '>=', $minPrice);
+        }
+
+        if ($maxPrice !== null) {
+            $posts->where('price', '<=', $maxPrice);
+        }
+
+        // Include related models 
+        $posts = $posts->with(['images', 'category', 'location'])->get();
+
+        return response()->json($posts);
+    }
+
+    public function searchByFilterAdmin(Request $request)
+    {
+        // Fetch query parameters
+        $query = $request->input('query');
+        $location = $request->input('location');
+        $category = $request->input('category');
+        $minPrice = $request->input('minPrice');
+        $maxPrice = $request->input('maxPrice');
+        $condition = $request->input('condition');
         $status = intval($request->input('status'));
 
         $posts = Post::query();
@@ -141,13 +191,10 @@ class PostController extends Controller
             $posts->where('condition', $condition);
         }
 
-        //dd($status);
         // Filter by status
         if ($status === 0 || $status === 1) {
             $posts->where('is_active', $status);
         }
-
-        //dd($posts->get());
 
         // Filter by price range
         if ($minPrice !== null) {

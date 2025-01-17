@@ -86,7 +86,6 @@
                 </select>
             </div>
 
-
         </div>
 
         <div v-if="!loading && posts.length === 0" class="text-center text-gray-500">
@@ -317,6 +316,12 @@ export default {
                 return;
             }
 
+            if (receiverUserId === this.authenticatedUser.id)
+            {
+                this.errors[postId] = "You cannnot send message to yourself.";
+                return;
+            }
+
             // Clear errors if validation passes
             this.errors[postId] = null;
             
@@ -358,6 +363,8 @@ export default {
                 maxPrice: this.priceRange.max || null,
                 condition: this.selectedCondition || null,
             };
+
+            console.log(params)
 
             axios
                 .get("/posts/search/filter", { params })
