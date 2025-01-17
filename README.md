@@ -45,7 +45,7 @@ Users can communicate directly with each other through an integrated messaging s
 ![Add item](https://i.ibb.co/rFYkpdf/Screenshot-2025-01-10-at-18-25-11-Dashboard-Laravel.png)
 
 ### Admin approves a post
-![Chat](https://i.postimg.cc/Jny8ms43/ssap.png)
+![Admin](https://i.ibb.co/kBTSWg0/Screenshot-2025-01-17-145626.png)
 
 ### List items
 ![List items](https://i.ibb.co/XYwV3Q2/Screenshot-2025-01-10-at-18-26-15-Dashboard-Laravel.png)
