@@ -19,7 +19,7 @@ return [
     
         'allowed_methods' => ['*'], // Allow all methods
     
-        'allowed_origins' => ['*'], // Allow all origins (consider restricting in production)
+        'allowed_origins' => [], // Allow all origins (consider restricting in production)
     
         'allowed_origins_patterns' => [],
     
