@@ -34,10 +34,10 @@ Users can communicate directly with each other through an integrated messaging s
 ![Home page](https://i.ibb.co/166Cdff/Screenshot-2024-12-09-at-15-53-10-Welcome-Laravel.png)
 
 ### Add item
-![Add item](https://i.ibb.co/rFYkpdf/Screenshot-2025-01-10-at-18-25-11-Dashboard-Laravel.png)
+![Add item](https://i.ibb.co/JFWg97br/Screenshot-2025-01-29-at-16-42-47-Dashboard-Laravel.png)
 
-### Admin approves a post
-![Admin](https://i.ibb.co/kBTSWg0/Screenshot-2025-01-17-145626.png)
+### Admin disapproves a post
+![Admin](https://i.ibb.co/B5xyCm5m/Screenshot-2025-01-29-at-16-36-55-Dashboard-Laravel.png)
 
 ### List items
 ![List items](https://i.ibb.co/XYwV3Q2/Screenshot-2025-01-10-at-18-26-15-Dashboard-Laravel.png)
