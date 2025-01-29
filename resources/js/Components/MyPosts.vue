@@ -80,6 +80,10 @@
                     </span>
                 </div>
 
+                <div class="mt-4 flex flex-col items-center justify-center">
+                    <p v-if="post.reject_message" class="text-red-500 text-sm mt-1">Reject reason: {{ post.reject_message }}</p>
+                </div>
+
                 <div class="flex items-center justify-center mt-4 p-3">
                     <button id="price-button" class="bg-purple-100 text-pink-700 font-bold text-sm sm:text-base inline-block px-3 py-2 rounded-lg shadow-md">
                         Price: {{ post.price }} &euro;
@@ -225,8 +229,11 @@
                 </div>
                 <span v-if="errors.images" class="text-red-600">{{ errors.images }}</span>
 
+                
+
                 <!-- Save and Cancel Buttons -->
                 <div class="flex justify-end">
+                    <Rules bgColor="bg-green-500"></Rules>
                     <button @click="deletePost" class="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600 mr-2">
                         Delete
                     </button>
@@ -270,8 +277,12 @@
 <script>
 import axios from 'axios';
 import { debounce } from 'lodash';
+import Rules from "./Rules.vue";
 
-export default {    
+export default { 
+    components: {
+        Rules,
+    },   
     data() {
         return {
             posts: [],

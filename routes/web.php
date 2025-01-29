@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages/{conversationId}', [MessageController::class, 'index']);
     Route::get('/last_message/{conversationId}', [MessageController::class, 'lastMessage']);
     Route::post('/messages/mark-as-read', [MessageController::class, 'markAsRead']);
+    Route::post('/reject-message', [PostController::class, 'rejectMessage']);
 });
 
 require __DIR__.'/auth.php';

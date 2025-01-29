@@ -312,14 +312,33 @@ class PostController extends Controller
     public function updateActive(Request $request, $id)
     {
         $validated = $request->validate([
-            'is_active' => 'required|boolean', 
+            'is_active' => 'required', 
         ]);
 
         $post = Post::findOrFail($id); 
+        if ($validated['is_active'] === 1)
+            $post->reject_message = '';
         $post->is_active = $validated['is_active']; 
         $post->save(); 
 
         return response()->json(['message' => 'Post updated successfully', 'post' => $post], 200);
+    }
+
+    public function rejectMessage(Request $request)
+    {
+        $request->validate([
+            'post_id' => 'required|exists:posts,id',
+            'content' => 'nullable|string',
+        ]);
+
+        $post = Post::findOrFail($request->post_id);
+        $post->reject_message = $request->content;
+        $post->save();
+
+        return response()->json([
+            'message' => 'Reject message sent to seller successfully!',
+            'post' => $post,
+        ], 200);
     }
 
     /**

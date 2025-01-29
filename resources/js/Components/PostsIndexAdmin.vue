@@ -172,34 +172,73 @@
                     </button>
                 </div>
 
-                <div class="mt-4 flex items-center justify-center space-x-3 group relative">
-                    <!-- Checkbox Toggle Switch -->
-                    <label class="flex items-center cursor-pointer relative">
-                        <input type="checkbox" class="sr-only" v-model="post.is_active" @change="updatePostStatus(post.id, post.is_active)" />
-                        <div class="w-10 h-5 bg-gray-200 
-                            rounded-full shadow-inner transition-colors duration-300 
-                            ease-in-out" :class="{ 'bg-green-500': post.is_active }">
+                <div class="mt-4 space-y-4 group relative">
+                    <!-- Flex Container for Toggle and Text -->
+                    <div class="flex items-center justify-center space-x-3">
+                        <!-- Checkbox Toggle Switch -->
+                        <label class="flex items-center cursor-pointer relative">
+                            <input
+                                type="checkbox"
+                                class="sr-only"
+                                @change="updatePostStatus(post.id, post.is_active)"
+                            />
+                            <div
+                                class="w-10 h-5 bg-gray-200 rounded-full shadow-inner transition-colors duration-300 ease-in-out"
+                                :class="{ 'bg-green-500': post.is_active }"
+                            ></div>
+
+                            <div
+                                class="dot absolute w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ease-in-out transform"
+                                :class="{ 'translate-x-5': post.is_active }"
+                            ></div>
+                        </label>
+
+                        <!-- Text Display for Active/Inactive -->
+                        <span
+                            class="text-lg font-semibold"
+                            :class="{ 'text-green-600': post.is_active, 'text-gray-500': !post.is_active }"
+                        >
+                            {{ post.is_active ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+
+                    <!-- Tooltip and Input Section -->
+                    <div>
+                        <div v-if="post.is_active" class="relative">
+                            <span
+                                class="absolute bottom-full mb-2 p-1 text-xs text-white bg-black rounded opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            >
+                                Deactivate this post!
+                            </span>
                         </div>
-
-                        <div class="dot absolute w-5 h-5 
-                            bg-white rounded-full shadow transition-transform duration-300 ease-in-out transform" 
-                            :class="{ 'translate-x-5': post.is_active }">
+                        <div v-else>
+                            <span
+                                class="absolute bottom-full mb-2 p-1 text-xs text-white bg-black rounded opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            >
+                                Activate this post!
+                            </span>
+                            <div class="flex items-center justify-center mt-1">
+                                <input
+                                    v-model="rejectMessages[post.id]"
+                                    placeholder="Type a reject message."
+                                    class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <button
+                                        @click="sendRejectMessage(post.id)"
+                                        class="px-6 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                    >
+                                    Send
+                                </button>
+                            </div>
+                            <div class="mt-4 flex flex-col items-center justify-center">
+                                <p v-if="errors[post.id]" class="text-red-500 text-sm mt-1">{{ errors[post.id] }}</p>
+                            </div>
                         </div>
-                    </label>
+                    </div>
+                </div>
 
-                  
-                    <!-- Text Display for Active/Inactive -->
-                    <span class="text-lg font-semibold" :class="{ 'text-green-600': post.is_active, 'text-gray-500': !post.is_active }">
-                        {{ post.is_active ? 'Active' : 'Inactive' }}
-                    </span>
-
-                        <!-- Tooltip Text on Hover -->
-                    <span v-if="post.is_active" class="absolute bottom-full mb-2 p-1 text-xs text-white bg-black rounded opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        Deactivate this post!
-                    </span>
-                    <span v-else class="absolute bottom-full mb-2 p-1 text-xs text-white bg-black rounded opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        Activate this post!
-                    </span>
+                <div class="mt-4 flex flex-col items-center justify-center">
+                    <p v-if="post.reject_message" class="text-red-500 text-sm mt-1">Reject reason: {{ post.reject_message }}</p>
                 </div>
 
                 <div class="flex items-center justify-center mt-4 p-3">
@@ -242,6 +281,8 @@ export default {
             isModalOpen: false,
             selectedImage: null,
             searchQuery: '',
+            rejectMessages: {},
+            errors: {},
             selectedCategory: "",
             selectedLocation: "",
             selectedCondition: "",
@@ -317,13 +358,52 @@ export default {
 
         async updatePostStatus(postId, isActive) {
             try {
+                if (isActive)
+                    (this.posts.find(p => p.id === postId)).is_active = 0;
+                else
+                    (this.posts.find(p => p.id === postId)).is_active = 1;
+
                 const response = await axios.patch(`/posts/${postId}`, {
-                    is_active: isActive ? 1 : 0 
+                    is_active: isActive ? 0 : 1 
                 });
+
+                //If admin approves the post clear the reject message
+                if (!isActive)
+                    (this.posts.find(p => p.id === postId)).reject_message = '';
 
             } catch (error) {
                 console.error("Error updating post status:", error);
             }
+        },
+        async sendRejectMessage(postId) {
+            if (!this.rejectMessages[postId] || this.rejectMessages[postId].trim() === "") {
+                // If the message is empty or only whitespace, show an error
+                this.errors[postId] = "Message cannot be empty.";
+                return;
+            }
+
+            if (this.rejectMessages[postId].length > 500) {
+                // If the message exceeds 500 characters, show an error
+                this.errors[postId] = "Message cannot exceed 500 characters.";
+                return;
+            }
+
+            // Clear errors if validation passes
+            this.errors[postId] = null;
+
+            await axios.post('/reject-message', {
+                post_id: postId,
+                content: this.rejectMessages[postId], 
+            })
+            .then(response => {
+                (this.posts.find(p => p.id === postId)).reject_message = this.rejectMessages[postId];
+                this.rejectMessages[postId] = '';
+                alert(response.data.message); 
+            })
+            .catch(error => {
+                console.error(error.response.data); 
+            });
+        
         },
 
     },

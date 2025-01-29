@@ -129,10 +129,12 @@
         </div>
       </div>
 
+      <Rules bgColor="bg-red-500"></Rules>
+
       <!-- Submit Button -->
       <button
         type="submit"
-        class="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+        class="text-xl w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
       >
         Submit Post
       </button>
@@ -148,8 +150,12 @@
 
 <script>
 import axios from "axios";
+import Rules from "./Rules.vue";
 
 export default {
+  components: {
+    Rules,
+  },
   data() {
     return {
       title: "",
