@@ -229,8 +229,6 @@
                 </div>
                 <span v-if="errors.images" class="text-red-600">{{ errors.images }}</span>
 
-                
-
                 <!-- Save and Cancel Buttons -->
                 <div class="flex justify-end">
                     <Rules bgColor="bg-green-500"></Rules>
@@ -248,31 +246,6 @@
         </div>
     </div>
 </template>
-
-<style>
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-.modal-content {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    max-width: 500px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-</style>
-
 
 <script>
 import axios from 'axios';
@@ -406,7 +379,6 @@ export default {
         removeImage(index, imageId) {
             // Remove image from the existing images array
             this.editedPost.images.splice(index, 1);
-            console.log(imageId);
             this.deleteImage(imageId);
         },
         async savePost() {
@@ -435,8 +407,10 @@ export default {
                 if (index !== -1) {
                     this.posts.splice(index, 1, updatedPost);
                 }
+                
+                // Close the modal
+                this.isEditModalOpen = false; 
 
-                this.isEditModalOpen = false; // Close the modal
                 this.fetchPosts();
             } catch (error) {
                 console.error("Error saving post:", error);
@@ -445,8 +419,13 @@ export default {
         async deletePost() {
             try {
                 await axios.delete(`/posts/${this.editedPost.id}`);
-                this.posts = this.posts.filter(post => post.id !== this.editedPost.id); // Remove post from the local array
-                this.isEditModalOpen = false; // Close the modal
+
+                // Remove post from the local array
+                this.posts = this.posts.filter(post => post.id !== this.editedPost.id);
+
+                // Close the modal
+                this.isEditModalOpen = false;
+
                 alert('Post deleted successfully');
             } catch (error) {
                 console.error('Error deleting post:', error);
@@ -466,3 +445,27 @@ export default {
     },
 };
 </script>
+
+<style>
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+</style>

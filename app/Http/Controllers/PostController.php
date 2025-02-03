@@ -259,7 +259,7 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::findOrFail($id);
-
+    
         // Validate the updated data
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -270,43 +270,48 @@ class PostController extends Controller
             'category_id' => 'required',
             'condition' => 'required'
         ]);
+    
+        // Check if any field is changed
+        $changes = array_diff_assoc($validated, $post->only(array_keys($validated)));
+    
+        if (!empty($changes)) {
+            $post->fill($validated);
 
-        $post->title = $validated['title'];
-        $post->body = $validated['body'];
-        $post->phone_number = $validated['phone_number'];
-        $post->price = $validated['price'];
-        $post->location_id = $validated['location_id'];
-        $post->category_id = $validated['category_id'];
-        $post->condition = $validated['condition'];
-        $post->save();
+            // Mark post as inactive for new admin approval if there are changes
+            $post->is_active = 0;
 
-        $imageUrls = [];
-
-        $images = $request->file('newImages');
-        if ($images)
-        foreach ($images as $image) {
-            $imageToSave = new Image();
-            $imageToSave->post_id = $post->id;
-
-            // Save images in 'storage/app/public/images'
-            $path = $image->storeAs('images', $image->getClientOriginalName(), 'public'); 
-
-            $imageToSave->file_path = Storage::url($path);
-
-            // Generate URL for each image
-            $imageUrls[] = Storage::url($path); 
-
-            $imageToSave->save();
+            $post->save();
         }
-
-
+    
+        $imageUrls = [];
+    
+        if ($request->hasFile('newImages')) {
+            foreach ($request->file('newImages') as $image) {
+                $imageToSave = new Image();
+                $imageToSave->post_id = $post->id;
+    
+                // Save images in 'storage/app/public/images'
+                $path = $image->storeAs('images', $image->getClientOriginalName(), 'public');
+    
+                $imageToSave->file_path = Storage::url($path);
+    
+                // Generate URL for each image
+                $imageUrls[] = Storage::url($path);
+    
+                $imageToSave->save();
+            }
+    
+            // Mark post as inactive for new admin approval if new images are uploaded
+            $post->is_active = 0;
+            $post->save();
+        }
+    
         return response()->json([
-            'title' => $validated['title'],
-            'body' => $validated['body'],
-            'phone_number' => $validated['phone_number'],
+            'title' => $post->title,
+            'body' => $post->body,
+            'phone_number' => $post->phone_number,
             'urls' => $imageUrls,
         ], 201);
-
     }
 
     public function updateActive(Request $request, $id)
