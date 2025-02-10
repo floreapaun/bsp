@@ -58,8 +58,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
     volumes:
-      - dbdata:/var/lib/mysql
-      - ./data.sql:/docker-entrypoint-initdb.d/bsp-dump.sql  
+      - dbdata:/var/lib/mysql  
     networks:
       - app-network
     ports:
