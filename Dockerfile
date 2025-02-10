@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     default-mysql-client \
-    wait-for-it \
     libpng-dev && \
     docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
@@ -31,16 +30,20 @@ WORKDIR /var/www
 # Remove default server definition
 RUN rm -rf /var/www/html
 
-# Copy existing application directory contents
-COPY . /var/www
-
-# Copy existing application directory permissions
+# Copy existing application directory and set correct permissions
 COPY --chown=www-data:www-data . /var/www
 
-# Change current user to www
+# Ensure necessary permissions
+RUN chmod -R 777 storage bootstrap/cache
+
+# Change current user to www-data
 USER www-data
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+# Install PHP dependencies as www-data
+RUN composer install --no-interaction --no-dev --optimize-autoloader
 
+# Expose port 9000
+EXPOSE 9000
+
+# Start PHP-FPM and run migrations on container startup
+CMD php artisan key:generate && php artisan migrate --force && php-fpm
