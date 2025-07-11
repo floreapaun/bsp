@@ -2,12 +2,19 @@
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://i.ibb.co/vxJCVBM/sb89a5opxft3c3efzd4c.webp" width="400"></a></p>
 
-## How to run inside Docker
+## How to install and run locally
 
 1. Clone the project (e.g. *git clone https://github.com/floreapaun/bsp.git*)
-2. Change directory to project home
-3. Run ```docker-compose up --build ```
-4. Check http://localhost:8000/ in the browser
+2. Install PHP packages with `composer install`
+3. Install NodeJS packages with `npm install`   
+4. Create a new MySQL database  
+5. Rewrite .env.example to .env and set MySQL credentials accordingly
+6. `php artisan storage:link`
+7. Run migrations and seed the database with `php artisan migrate --seed`
+8. Import database from /database/bsp.sql. 
+9. Generate new key with `php artisan key:generate` 
+10. Open the server by `php artisan serve`
+11. Run Vite server with `npm run dev`
 
 ## Features
 #### User-Generated Sales Posts:
